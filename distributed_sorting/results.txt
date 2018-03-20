@@ -14,3 +14,21 @@ Threaded bubble sort time:
 64 threads 6.91943 s
 128 threads 6.61671 s
 256 threads 6.35583 s
+
+
+SORTING BENCHMARK
+1000 vectors of 1000 elements
+ ---------------
+
+Quick sort time:
+0.556042 s
+Threaded bubble sort time:
+1 threads 115.029 s
+2 threads 58.3574 s
+4 threads 29.2681 s
+8 threads 16.1736 s
+16 threads 11.1825 s
+32 threads 8.33183 s
+64 threads 7.33634 s
+128 threads 7.60938 s
+256 threads 6.96958 s
