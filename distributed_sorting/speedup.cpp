@@ -1,20 +1,23 @@
 // Compares threaded bubble sort to sequential quick sort performance.
-#include <iostream>
-#include <random>
-#include <algorithm>
 #include <functional>
+#include <algorithm>
+#include <iostream>
+#include <thread>
 #include <vector>
 #include <chrono>
+#include <random>
+#include <cmath>
 
-#define NUM_VECTORS     100
-#define SIZE_VECTORS    100
-#define NUM_THREADS     1
+#define NUM_VECTORS         1000    // number of vectors
+#define SIZE_VECTORS        1000    // size of vectors
+#define THREADING_ORDER     9       // max threading order (2^THREADING_ORDER threads)
 
 using namespace std;
 
 // Bubble sort. Takes a vector to order as input.
 vector<int> bubblesort(vector<int> a) {
 
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
     bool swap = true;
     while(swap) {
         swap = false;
@@ -22,7 +25,7 @@ vector<int> bubblesort(vector<int> a) {
             if (a[i]>a[i+1] ){
                 a[i] += a[i+1];
                 a[i+1] = a[i] - a[i+1];
-                a[i] -=a[i+1];
+                a[i] -= a[i+1];
                 swap = true;
             }
         }
@@ -69,21 +72,6 @@ vector<int> quicksort(vector<int> vec, int L, int R) {
     return vec;
 }
 
-// generates vector with SIZE_VECTORS random elements
-vector<int> random_vector() {
-
-    random_device rnd_device;
-    mt19937 mersenne_engine(rnd_device());
-    uniform_int_distribution<int> dist(1, SIZE_VECTORS);
-
-    auto gen = std::bind(dist, mersenne_engine);
-    vector<int> vec(SIZE_VECTORS);
-    generate(begin(vec), end(vec), gen);
-
-    return vec;
-
-}
-
 void printvec(vector<int> &v) {
     cout << endl;
     for(auto e : v) {
@@ -92,50 +80,92 @@ void printvec(vector<int> &v) {
     cout << endl;
 }
 
-// MAIN
-int main() {
+// Threaded bubble sort execution
+void threaded_bubble_sort(vector<vector<int>> vec, const int NUM_THREADS) {
+    std::thread th[NUM_THREADS];
 
-    // generate random vector of vectors of int
+    int k=0;
+    for(auto v : vec) {
+        //vector<int> sorted = bubblesort(v);
+        // await for the current indexed thread to finish, if any
+        if(th[k].joinable()) {
+            std::thread::id tid = th[k].get_id();
+            th[k].join();
+            // cout << tid << " is finished. Thread idx " << k << endl;
+        }
+        th[k] = std::thread(bubblesort, v);
+        k++;
+        k %= NUM_THREADS;
+    }
+    // join remaining threads
+    for(int t=0; t<NUM_THREADS; t++) {
+        th[t].join();
+    }
+}
+
+// Generate random vector of vectors of integers
+vector<vector<int>> generate_vectors() {
     vector<vector<int>> vec;
     for(int k=0; k<NUM_VECTORS; k++) {
-        vec.push_back(random_vector());
+
+        random_device rnd_device;
+        mt19937 mersenne_engine(rnd_device());
+        uniform_int_distribution<int> dist(1, SIZE_VECTORS);
+
+        auto gen = std::bind(dist, mersenne_engine);
+        vector<int> v(SIZE_VECTORS);
+        generate(begin(v), end(v), gen);
+
+        vec.push_back(v);
+
     }
+    return vec;
+}
 
-    int el = 0;
-    for(auto i : vec) {
-        for(auto k : i) {
-            el++;
-            //cout << k << ", ";
-        }
-    }
-
-    // assert number of values is correct
-    if (el != NUM_VECTORS * SIZE_VECTORS) {
-        cout << "\n\tAlgo de errado não está certo" << endl;
-        exit(EXIT_FAILURE);
-    }
-
-    std::chrono::duration<double> elapsed;
-
-    // bubble sort benchmark
-    auto start = std::chrono::high_resolution_clock::now();
-    for(auto v : vec) {
-        vector<int> sorted = bubblesort(v);
-        //printvec(sorted);
-    }
-    auto finish = std::chrono::high_resolution_clock::now();
-    elapsed = finish - start;
-    std::cout << "Bubble sort time for " << NUM_VECTORS << " vectors of "<< SIZE_VECTORS << " elements: " << elapsed.count() << " s\n";
-
-    // quick sort benchmark
-    start = std::chrono::high_resolution_clock::now();
+// Single thread quick sort execution
+void sequential_quick_sort(vector<vector<int>> vec) {
     for(auto v : vec) {
         vector<int> sorted = quicksort(v, 0, vec.size()-1);
         //printvec(sorted);
     }
-    finish = std::chrono::high_resolution_clock::now();
+}
+
+// MAIN
+int main() {
+
+    std::chrono::duration<double> elapsed;
+    if(pow(2,THREADING_ORDER) > NUM_VECTORS) {
+        cout << "Oops. The number of vectors should be the same or higher than the number of threads." << endl;
+        exit(EXIT_FAILURE);
+    }
+
+    // generate random vector of vectors of int
+    vector<vector<int>> vec = generate_vectors();
+
+    cout << "SORTING BENCHMARK" << endl;
+    cout << NUM_VECTORS << " vectors of "<< SIZE_VECTORS << " elements" << endl;
+    cout << " --------------- " << endl << endl;
+
+    // quick sort benchmark
+    cout << "Quick sort time:" << endl;
+    auto start = std::chrono::high_resolution_clock::now();
+    sequential_quick_sort(vec);
+    auto finish = std::chrono::high_resolution_clock::now();
     elapsed = finish - start;
-    std::cout << "Quick sort time for " << NUM_VECTORS << " vectors of "<< SIZE_VECTORS << " elements: " << elapsed.count() << " s\n";
+    cout << elapsed.count() << " s\n";
+
+    // threaded bubble sort benchmark
+    cout << "Threaded bubble sort time:" << endl;
+    int num_threads;
+    for(int order=0; order<THREADING_ORDER; order++) {
+        num_threads = pow(2, order);
+        start = std::chrono::high_resolution_clock::now();
+        threaded_bubble_sort(vec, num_threads);
+        finish = std::chrono::high_resolution_clock::now();
+        elapsed = finish - start;
+
+        cout << num_threads << " threads " << elapsed.count() << " s\n";
+    }
 
 	return 0;
 
