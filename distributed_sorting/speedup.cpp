@@ -2,34 +2,43 @@
 #include <functional>
 #include <algorithm>
 #include <iostream>
+#include <utility>
 #include <thread>
 #include <vector>
 #include <chrono>
 #include <random>
 #include <cmath>
 
-#define NUM_VECTORS         1000    // number of vectors
-#define SIZE_VECTORS        1000    // size of vectors
-#define THREADING_ORDER     9       // max threading order (2^THREADING_ORDER threads)
+#define NUM_VECTORS         1000                        // number of vectors
+#define SIZE_VECTORS        1000                        // size of vectors
+#define THREADING_ORDER     floor(log2(NUM_VECTORS))    // max threading order (2^THREADING_ORDER threads)
 
 using namespace std;
 
+void printvec(vector<int> &v) {
+    cout << endl;
+    for(auto e : v) {
+        cout << e << " ";
+    }
+    cout << endl;
+}
+
 // Bubble sort. Takes a vector to order as input.
 vector<int> bubblesort(vector<int> a) {
-
-    std::this_thread::sleep_for(std::chrono::milliseconds(100));
-    bool swap = true;
-    while(swap) {
-        swap = false;
-        for (size_t i=0; i<a.size()-1; i++) {
-            if (a[i]>a[i+1] ){
-                a[i] += a[i+1];
-                a[i+1] = a[i] - a[i+1];
-                a[i] -= a[i+1];
-                swap = true;
+    bool swapped = true;
+    int aux;
+    while(swapped) {
+        swapped = false;
+        for (auto &it : a) {
+            if ( it > *(&it+1) ) {
+                aux = it;
+                it = *(&it+1);
+                *(&it+1) = aux;
+                swapped = true;
             }
         }
     }
+
     return a;
 
 }
@@ -70,14 +79,6 @@ vector<int> quicksort(vector<int> vec, int L, int R) {
     }
 
     return vec;
-}
-
-void printvec(vector<int> &v) {
-    cout << endl;
-    for(auto e : v) {
-        cout << e << " ";
-    }
-    cout << endl;
 }
 
 // Threaded bubble sort execution
@@ -157,14 +158,17 @@ int main() {
     // threaded bubble sort benchmark
     cout << "Threaded bubble sort time:" << endl;
     int num_threads;
-    for(int order=0; order<THREADING_ORDER; order++) {
+    for (int order=THREADING_ORDER; order>=0; order--) {
         num_threads = pow(2, order);
+        cout << num_threads << " threads ";
+        fflush(stdout);
+
         start = std::chrono::high_resolution_clock::now();
         threaded_bubble_sort(vec, num_threads);
         finish = std::chrono::high_resolution_clock::now();
         elapsed = finish - start;
 
-        cout << num_threads << " threads " << elapsed.count() << " s\n";
+        cout << elapsed.count() << " s\n";
     }
 
 	return 0;

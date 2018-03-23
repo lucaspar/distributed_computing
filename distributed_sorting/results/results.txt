@@ -1,0 +1,35 @@
+SORTING BENCHMARK
+1000 vectors of 1000 elements
+ ---------------
+
+Quick sort time:
+0.520888 s
+Threaded bubble sort time:
+512 threads 5.30443 s
+256 threads 5.24317 s
+128 threads 5.21669 s
+64 threads 5.23156 s
+32 threads 5.365 s
+16 threads 5.52815 s
+8 threads 5.63026 s
+4 threads 5.63031 s
+2 threads 6.176 s
+1 threads 10.968 s
+
+SORTING BENCHMARK
+1000 vectors of 1000 elements
+ ---------------
+
+Quick sort time:
+0.517368 s
+Threaded bubble sort time:
+512 threads 5.30598 s
+256 threads 5.22222 s
+128 threads 5.39355 s
+64 threads 5.20622 s
+32 threads 5.20396 s
+16 threads 5.56828 s
+8 threads 5.81276 s
+4 threads 6.2015 s
+2 threads 6.18979 s
+1 threads 10.9737 s
