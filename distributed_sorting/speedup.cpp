@@ -128,7 +128,6 @@ vector<vector<int>> generate_vectors() {
 void sequential_quick_sort(vector<vector<int>> vec) {
     for(auto v : vec) {
         vector<int> sorted = quicksort(v, 0, vec.size()-1);
-        //printvec(sorted);
     }
 }
 
@@ -145,7 +144,7 @@ int main() {
     vector<vector<int>> vec = generate_vectors();
 
     if (CSV_OUTPUT) {
-        cout << "algorithm,threads,time" << endl;
+        // cout << "algorithm,threads,time" << endl;
     }
     else {
         cout << "SORTING BENCHMARK" << endl;
