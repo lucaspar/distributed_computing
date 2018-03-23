@@ -12,6 +12,7 @@
 #define NUM_VECTORS         1000                        // number of vectors
 #define SIZE_VECTORS        1000                        // size of vectors
 #define THREADING_ORDER     floor(log2(NUM_VECTORS))    // max threading order (2^THREADING_ORDER threads)
+#define CSV_OUTPUT          true                        // csv style output
 
 using namespace std;
 
@@ -143,32 +144,45 @@ int main() {
     // generate random vector of vectors of int
     vector<vector<int>> vec = generate_vectors();
 
-    cout << "SORTING BENCHMARK" << endl;
-    cout << NUM_VECTORS << " vectors of "<< SIZE_VECTORS << " elements" << endl;
-    cout << " --------------- " << endl << endl;
+    if (CSV_OUTPUT) {
+        cout << "algorithm,threads,time" << endl;
+    }
+    else {
+        cout << "SORTING BENCHMARK" << endl;
+        cout << NUM_VECTORS << " vectors of "<< SIZE_VECTORS << " elements" << endl;
+        cout << " --------------- " << endl << endl;
+    }
 
     // quick sort benchmark
-    cout << "Quick sort time:" << endl;
+    if (!CSV_OUTPUT) cout << "Quick sort time:" << endl;
+
     auto start = std::chrono::high_resolution_clock::now();
     sequential_quick_sort(vec);
     auto finish = std::chrono::high_resolution_clock::now();
     elapsed = finish - start;
-    cout << elapsed.count() << " s\n";
+
+    if (CSV_OUTPUT) cout << "quick,1," << elapsed.count() << endl;
+    else            cout << elapsed.count() << " s" << endl;
 
     // threaded bubble sort benchmark
-    cout << "Threaded bubble sort time:" << endl;
+    if (!CSV_OUTPUT) cout << "Threaded bubble sort time:" << endl;
     int num_threads;
     for (int order=THREADING_ORDER; order>=0; order--) {
+
         num_threads = pow(2, order);
-        cout << num_threads << " threads ";
-        fflush(stdout);
+        if (!CSV_OUTPUT) {
+            cout << num_threads << " threads ";
+            fflush(stdout);
+        }
 
         start = std::chrono::high_resolution_clock::now();
         threaded_bubble_sort(vec, num_threads);
         finish = std::chrono::high_resolution_clock::now();
         elapsed = finish - start;
 
-        cout << elapsed.count() << " s\n";
+        if (CSV_OUTPUT) cout << "bubble," << num_threads << "," << elapsed.count() << endl;
+        else            cout << elapsed.count() << " s" << endl;
+
     }
 
 	return 0;
