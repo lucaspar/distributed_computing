@@ -1,5 +1,5 @@
 ---
-- name: step3
+- name: playbook3.0
   hosts: gluster-servers
   become: true
   tasks:

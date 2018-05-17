@@ -1,5 +1,5 @@
 ---
-- name: step4
+- name: playbook4
   hosts: gluster-clients
   become: true
   tasks:

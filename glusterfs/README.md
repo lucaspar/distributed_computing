@@ -2,10 +2,11 @@
 
 ### System Requirements
 
+Three (2 servers + 1 client) or more machines forming an internal network with:
 - CentOS 7.
 - Root access;
 
-### Enable remote access in machines.
+### Enable remote access in machines
 
 **Pick a "primary" machine**:
 `a.` Manually run `openssh.sh`;
@@ -14,7 +15,7 @@
 `c.` Install Ansible (see `ansible.sh`);
 `d.` Replicate the image to the other machines OR do steps `a` and `b` manually in every node.
 
-### Update `hosts` in all machines.
+### Update hosts
 
 `a.` Get all IPs in local network (run `netw.sh`);
 `b.` Update Ansible hosts in `/etc/ansible/hosts`:
@@ -41,7 +42,7 @@
 
 ### Deploy
 
-Run all playbooks in order stopping if anything goes wrong.
+Run all playbooks in order (1, 2, 3.0, 3.5, 4) stopping if anything goes wrong.
 
 ```bash
 ansible-playbook playbook1.yml -u root

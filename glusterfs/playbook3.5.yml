@@ -1,5 +1,5 @@
 ---
-- name: step3.5
+- name: playbook3.5
   hosts: gluster-servers[0]
   become: true
   tasks:

@@ -1,6 +1,12 @@
-# Original: https://www.howtoforge.com/tutorial/high-availability-storage-with-glusterfs-on-centos-7/
-###################################################
-## STEP 1
+##################################################
+#               IGNORE THIS FILE                 #
+# unless you had problems deploying with Ansible #
+##################################################
+
+# Based on:
+# https://www.howtoforge.com/tutorial/high-availability-storage-with-glusterfs-on-centos-7/
+
+## STEP 1 - update hosts files
 
 #nano /etc/hosts
 
