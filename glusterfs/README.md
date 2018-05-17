@@ -1,3 +1,29 @@
+# Step-by-step
+
+### Enable remote access in machines.
+
+`a.` Pick a machine;
+`b.` Manually run `openssh.sh`;
+`c.` Check the remote access with `ssh`.
+`d.` Install any Ansible (or other automation) dependency
+`e.` If it works, replicate the image to the other machines OR do steps `b` and `c` manually in every node.
+
+### Update `/etc/hosts`.
+
+`a.` Pick two or more machines to work as servers (replicas).
+`b.` In all machines (servers and clients), update `/etc/hosts` with the chosen servers' names (run `netw.sh`).
+
+### Setup GlusterFS
+
+`a.` Run step **2** in **all machines**.
+`b.` Run step **3** in **all servers**.
+`c.` Run step **3.5** in **one server**.
+`d.` Run step **4** in **clients**.
+
+#### Steps:
+
+```bash
+
 # Original: https://www.howtoforge.com/tutorial/high-availability-storage-with-glusterfs-on-centos-7/
 ###################################################
 ## STEP 1
@@ -65,3 +91,5 @@ mount | grep -C 2 gluster
 df -h | grep gluster
 
 echo "/usr/sbin/mount.glusterfs server1.example.com:/testvol /mnt/glusterfs" >> /etc/rc.local
+
+```
