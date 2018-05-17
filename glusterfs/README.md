@@ -3,26 +3,24 @@
 ### System Requirements
 
 Three (2 servers + 1 client) or more machines forming an internal network with:
-- CentOS 7.
-- Root access;
++ CentOS 7.
++ Root access;
 
 ### Enable remote access in machines
 
 **Pick a "primary" machine**:
-`a.` Manually run `openssh.sh`;
-`b.` Check the remote access with `ssh`;
++ Manually run `openssh.sh`;
++ Check the remote access with `ssh`;
+
 **If remote access works:**
-`c.` Install Ansible (see `ansible.sh`);
-`d.` Replicate the image to the other machines OR do steps `a` and `b` manually in every node.
++ Replicate the image to the other machines OR:
+    - install SSH manually in every node.
++ Install Ansible (see `ansible.sh`);
 
 ### Update hosts
 
-`a.` Get all IPs in local network (run `netw.sh`);
-`b.` Update Ansible hosts in `/etc/ansible/hosts`:
-> Being:
->   - `10.0.0.1` or `10.0.0.2` the primary machine;
->   - Any number of `gluster-clients`:
->   - 2 `gluster-servers`;
++ Get all IPs in local network (run `netw.sh`);
++ Update Ansible hosts in `/etc/ansible/hosts` as in:
 
 ```
 [gluster-servers]
@@ -36,9 +34,13 @@ Three (2 servers + 1 client) or more machines forming an internal network with:
 10.0.0.6
 10.0.0.7
 ```
+> Being:
+>   - `10.0.0.1` or `10.0.0.2` the "primary" machine;
+>   - Any number of `gluster-clients`:
+>   - 2 `gluster-servers`;
 
-`c.` Update `playbook1.yml` with hosts' IPs.
-`d.` Update `auth.allow` IP mask in `playbook3.5.yml` to match all `gluster-clients`.
++ Update `playbook1.yml` with hosts' IPs.
++ Update `auth.allow` IP mask in `playbook3.5.yml` to match all `gluster-clients`.
 
 ### Deploy
 
