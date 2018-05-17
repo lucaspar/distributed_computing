@@ -21,6 +21,7 @@ yum -y install yum-priorities
 
 nano /etc/yum.repos.d/epel.repo
 # add "priority=10" in [epel section]
+#sed -i '/priority/c\priority=10' /etc/yum.repos.d/epel.repo
 
 yum -y update
 
@@ -47,8 +48,8 @@ gluster peer status
 
 gluster volume create testvol replica 2 transport tcp server1.example.com:/data server2.example.com:/data force
 gluster volume start testvol
-
 gluster volume info
+
 # client1.example.com (= 192.168.1.102)
 #gluster volume set testvol auth.allow 192.168.1.102
 gluster volume set testvol auth.allow 192.168.*.*
@@ -65,3 +66,5 @@ mount | grep -C 2 gluster
 df -h | grep gluster
 
 echo "/usr/sbin/mount.glusterfs server1.example.com:/testvol /mnt/glusterfs" >> /etc/rc.local
+
+```

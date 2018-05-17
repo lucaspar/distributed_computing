@@ -1,0 +1,38 @@
+---
+- name: step3.5
+  hosts: gluster-servers[0]
+  become: true
+  tasks:
+
+    # REPLICA
+    - name: Add server as replica
+      command: gluster peer probe server2
+
+    - name: Check replica status
+      command: gluster peer status
+      register: peer_status
+
+    - debug: msg="{{ peer_status.stdout }}"
+
+    # VOLUME
+    - name: Create volume
+      command: gluster volume create testvol replica 2 transport tcp server1:/data server2:/data force
+
+    - name: Start volume
+      command: gluster volume start testvol
+
+    - name: Check status
+      command: gluster volume info
+      register: volume_status
+
+    - debug: msg="{{ volume_status.stdout }}"
+
+    # ALLOW CONNECTIONS
+    - name: Allow connections
+      command: gluster volume set testvol auth.allow 10.0.0.*
+
+    - name: Check allowed
+      command: gluster volume info
+      register: volume_allow
+
+    - debug: msg="{{ volume_allow.stdout }}"

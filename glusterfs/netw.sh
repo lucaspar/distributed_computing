@@ -10,7 +10,7 @@ map() {
 
 # match only "open" ports
 format() {
-    awk '/open/{print "client" i++ "\t" $2}'
+    awk '/open/{print "client" i++ " " $2}'
 }
 
 # test command
@@ -20,9 +20,10 @@ test() {
 
 # add them to /etc/hosts
 run() {
-    echo 'please uncomment the line below in the .sh'
-    #xargs -i ./hosts.sh add {}
+    xargs -l bash -c './hosts.sh add $0 $1'
 }
 
-map | format | test
-# map | format | run
+# map | format | test
+map | format | run;
+
+less hosts

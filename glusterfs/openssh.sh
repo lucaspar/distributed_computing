@@ -3,6 +3,11 @@
 # Setup root ssh access in servers
 ##################################
 
+if [[ $EUID -ne 0 ]]; then
+   echo "This script must be run as root on a CentOS machine."
+   exit 1
+fi
+
 # Install ssh if not already installed
 yum -y install openssh-server openssh-clients
 chkconfig sshd on

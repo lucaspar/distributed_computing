@@ -3,8 +3,13 @@
 # Setup Ansible in one machine
 ##############################
 
-sudo yum install ansible
-sudo subscription-manager repos --enable rhel-7-server-ansible-2.5-rpms
+if [[ $EUID -ne 0 ]]; then
+   echo "This script must be run as root on a CentOS machine."
+   exit 1
+fi
+
+yum install ansible
+subscription-manager repos --enable rhel-7-server-ansible-2.5-rpms
 
 vim /etc/ansible/ansible.cfg
 # change to:

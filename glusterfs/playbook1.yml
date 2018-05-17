@@ -1,0 +1,16 @@
+---
+- name: step1
+  hosts: gluster-servers:gluster-clients
+  become: true
+  tasks:
+
+    - name: Add mappings to /etc/hosts
+      blockinfile:
+          path: /etc/hosts
+          block: |
+            {{ item.ip }} {{ item.name }}
+          marker: "# {mark} ANSIBLE MANAGED BLOCK {{ item.name }}"
+      with_items:
+          - { name: server1, ip: 10.142.0.3 }
+          - { name: server2, ip: 10.142.0.4 }
+          - { name: client1, ip: 10.142.0.5 }

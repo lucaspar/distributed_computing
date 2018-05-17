@@ -1,0 +1,19 @@
+---
+- name: step4
+  hosts: gluster-clients
+  become: true
+  tasks:
+
+    - name: Install glusterfs-client
+      yum:
+        name: glusterfs-client
+        state: latest
+
+    - name: Creates glusterfs directory
+      file: path=/mnt/glusterfs state=directory
+
+    - name: Mount volume
+      command: mount.glusterfs server1:/testvol /mnt/glusterfs
+
+    - name: Enable volume automount
+      command: echo "/usr/sbin/mount.glusterfs server1:/testvol /mnt/glusterfs" >> /etc/rc.local

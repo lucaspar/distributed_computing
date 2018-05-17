@@ -1,0 +1,37 @@
+---
+- name: step3
+  hosts: gluster-servers
+  become: true
+  tasks:
+
+    - name: Install Gluster
+      yum:
+        name: centos-release-gluster
+        state: latest
+
+    - name: Download userspace-rcu
+      get_url:
+        url: https://buildlogs.centos.org/centos/7/storage/x86_64/gluster-4.0/userspace-rcu-0.10.0-3.el7.x86_64.rpm
+        dest: /tmp/urcu.rpm
+
+    - name: Install userspace-rcu
+      yum:
+        name: /tmp/urcu.rpm
+        state: present
+
+    - name: Install glusterfs-server
+      yum:
+        name: glusterfs-server
+        state: present
+
+    - name: Start glusterd
+      service:
+        name: glusterd.service
+        enabled: yes
+        state: started
+
+    - name: Check glusterfs
+      command: glusterfsd --version
+      register: gfsversion
+
+    - debug: msg="{{ gfsversion.stdout }}"
